@@ -4,7 +4,10 @@ import React, { Component } from "react";
 import {
   View,
   Text,
-  StyleSheet
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  Alert
 } from "react-native";
 
 import {
@@ -17,20 +20,22 @@ export default class App extends Component {
 
   constructor(props) {
     super(props);
+    this.dots = [];
+    this.state = {
+      inputX: '50',
+      inputY: '100',
+      data: this.dots
+    }
   }
-
-  state = {
-    data: this.getScatterData()
-  }
-
-  getScatterData() {
-    return range(100).map((index) => {
-      return {
-        x: random(1, 50),
-        y: random(1, 100),
-        size: random(8) + 3
-      };
-    });
+  getScatterData(currentX = this.state.inputX, currentY = this.state.inputY) {
+    this.dots.push({ 
+      x: Number(currentX),
+      y: Number(currentY),
+      size: random(8) + 7
+    })
+    this.setState({
+      data: this.dots
+    })
   }
 
   onDomainChange(domain) {
@@ -63,7 +68,7 @@ export default class App extends Component {
           domain={{y: [0, 100]}}
           containerComponent={
             <VictoryZoomContainer 
-              zoomDomain={{x: [0, 35], y: [0, 70]}}
+              zoomDomain={{x: [0, 50], y: [0, 100]}}
             />
           }
         >
@@ -77,6 +82,29 @@ export default class App extends Component {
             }}
           />
         </VictoryChart>
+        <Text>
+            X:
+        </Text>
+        <TextInput
+          keyboardType={'numeric'}
+          style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+          onChangeText={(text) => this.setState({inputX:text})}
+          value={this.state.inputX}
+        />
+        <Text>
+            {'\n'}Y:
+        </Text>
+        <TextInput
+          keyboardType={'numeric'}
+          style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+          onChangeText={(text) => this.setState({inputY:text})}
+          value={this.state.inputY}
+        />
+        <TouchableOpacity style={custom.button} onPress={() => this.getScatterData()}>
+          <Text style={{fontWeight:'bold'}}>
+            NEW DOT !
+          </Text>
+        </TouchableOpacity>
       </View>
     )
   }
@@ -95,5 +123,11 @@ const custom = StyleSheet.create({
     alignItems: 'center',
     textAlign: 'center',
     margin: 12
+  },
+  button: {
+    alignItems: 'center',
+    backgroundColor: '#DDDDDD',
+    padding: 10,
+    margin: 20
   }
 })
